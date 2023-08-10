@@ -5,7 +5,6 @@ import (
 	"net/url"
 
 	"github.com/cloudfoundry-community/go-cfclient/v3/internal/path"
-
 	"github.com/cloudfoundry-community/go-cfclient/v3/resource"
 )
 
