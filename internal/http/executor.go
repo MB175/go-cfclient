@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/cloudfoundry-community/go-cfclient/v3/internal/path"
 	"io"
 	"net/http"
+
+	"github.com/cloudfoundry-community/go-cfclient/v3/internal/path"
+	"golang.org/x/oauth2"
 )
 
 var errNilContext = errors.New("context cannot be nil")
@@ -48,6 +50,16 @@ func (c *Executor) ExecuteRequest(request *Request) (*http.Response, error) {
 	// do the request to the remote API
 	r, err := c.do(req, followRedirects)
 	if err != nil {
+		var oauthErr *oauth2.RetrieveError
+		if errors.As(err, &oauthErr) {
+			if oauthErr.Response.StatusCode == http.StatusUnauthorized {
+				err = c.reAuthenticate()
+				if err != nil {
+					return nil, err
+				}
+				r, err = c.do(req, followRedirects)
+			}
+		}
 		return nil, err
 	}
 
