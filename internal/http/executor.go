@@ -130,7 +130,8 @@ func (c *Executor) do(request *http.Request, followRedirects bool) (*http.Respon
 			return nil, ctx.Err()
 		default:
 		}
-		return nil, fmt.Errorf("error executing request, failed during HTTP request send: %w", err)
+		return nil, err
+		//return nil, fmt.Errorf("error executing request, failed during HTTP request send: %w", err)
 	}
 	return r, nil
 }
